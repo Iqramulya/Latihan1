@@ -1,12 +1,13 @@
 import streamlit as st
 import pandas as pd
 
+
 def show_dashboard():
     st.title("📊 Dashboard Stok Obat – Kepala Farmasi")
 
     st.caption(
         "Ringkasan kondisi stok dan hasil prediksi kebutuhan obat "
-        "berdasarkan data historis yang diunggah."
+        "berdasarkan data historis yang telah diproses oleh sistem."
     )
 
     # ===============================
@@ -14,23 +15,21 @@ def show_dashboard():
     # ===============================
     if "hasil_prediksi" not in st.session_state:
         st.warning(
-            "Belum ada data prediksi. "
-            "Silakan unggah data pada halaman **Upload & Prediksi**."
+            "Belum ada data prediksi.\n\n"
+            "Silakan unggah data pada halaman **Upload & Prediksi** "
+            "untuk melihat hasil analisis."
         )
         return
 
     hasil = st.session_state["hasil_prediksi"].copy()
 
     # ===============================
-    # HITUNG RINGKASAN STATUS
+    # RINGKASAN STATUS STOK
     # ===============================
     count_aman = (hasil["Status_Stok"] == "Aman").sum()
     count_waspada = (hasil["Status_Stok"] == "Waspada").sum()
     count_kritis = (hasil["Status_Stok"] == "Kritis").sum()
 
-    # ===============================
-    # RINGKASAN STATUS (KPI)
-    # ===============================
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -43,30 +42,33 @@ def show_dashboard():
         st.metric("🔴 Kritis", count_kritis)
 
     # ===============================
-    # REKOMENDASI SINGKAT
+    # REKOMENDASI SISTEM
     # ===============================
+    st.markdown("---")
+
     if count_kritis > 0:
         st.error(
-            f"Terdapat **{count_kritis} obat** dalam kondisi **kritis** "
-            "dan direkomendasikan untuk segera dilakukan pengadaan."
+            f"⚠️ **{count_kritis} obat** berada pada kondisi **kritis**.\n\n"
+            "Direkomendasikan untuk **segera dilakukan pengadaan** "
+            "guna mencegah kehabisan stok."
         )
     elif count_waspada > 0:
         st.warning(
-            f"Terdapat **{count_waspada} obat** dalam kondisi **waspada**. "
-            "Perlu pemantauan stok."
+            f"⚠️ **{count_waspada} obat** berada pada kondisi **waspada**.\n\n"
+            "Perlu dilakukan pemantauan dan perencanaan pengadaan."
         )
     else:
         st.success(
-            "Seluruh obat berada dalam kondisi **aman**. "
+            "✅ Seluruh obat berada pada kondisi **aman**.\n\n"
             "Tidak diperlukan pengadaan dalam waktu dekat."
         )
 
     # ===============================
     # TABEL HASIL PREDIKSI
     # ===============================
-    st.subheader("📋 Ringkasan Hasil Prediksi")
+    st.markdown("---")
+    st.subheader("📋 Ringkasan Hasil Prediksi Kebutuhan Obat")
 
-    # Urutkan: Kritis → Waspada → Aman
     urutan_status = {"Kritis": 0, "Waspada": 1, "Aman": 2}
     hasil["__order"] = hasil["Status_Stok"].map(urutan_status)
     hasil = hasil.sort_values("__order").drop(columns="__order")
@@ -77,11 +79,15 @@ def show_dashboard():
     )
 
     # ===============================
-    # CATATAN BAWAH (AKADEMIK & PRAKTIS)
+    # INFO TAMBAHAN (AKADEMIK)
     # ===============================
+    if "last_update" in st.session_state:
+        st.caption(
+            f"Terakhir diperbarui: {st.session_state['last_update']}"
+        )
+
     st.caption(
-        "Catatan: Prediksi dilakukan untuk jangka pendek (maksimal 7 hari) "
-        "berdasarkan data historis. "
-        "Hasil digunakan sebagai **pendukung pengambilan keputusan**, "
-        "bukan pengganti kebijakan manajerial."
+        "Catatan: Sistem ini digunakan sebagai **pendukung pengambilan keputusan**. "
+        "Hasil prediksi bersifat jangka pendek (maksimal 7 hari) "
+        "dan tidak menggantikan kebijakan manajerial rumah sakit."
     )

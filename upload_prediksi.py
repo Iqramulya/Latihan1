@@ -8,12 +8,14 @@ from utils_model import preprocess_uploaded_file, predict_n_days
 # ===============================
 model = joblib.load("model_prediksi_obat.pkl")
 
+
 def show_upload_page():
     st.title("📤 Upload Data & Prediksi Kebutuhan Obat")
 
     st.caption(
-        "Unggah file Excel/CSV berisi data historis pemakaian obat. "
-        "Sistem akan memproses data dan menghasilkan prediksi kebutuhan jangka pendek."
+        "Unggah file berisi data historis pemakaian obat. "
+        "Sistem akan memproses data dan menghasilkan prediksi "
+        "kebutuhan obat jangka pendek."
     )
 
     # ===============================
@@ -24,9 +26,9 @@ def show_upload_page():
         type=["csv", "xlsx"]
     )
 
-    if not uploaded_file:
+    if uploaded_file is None:
         st.info(
-            "Format kolom yang dibutuhkan:\n"
+            "**Format kolom yang dibutuhkan:**\n\n"
             "- tanggal\n"
             "- kode_obat\n"
             "- nama_obat\n"
@@ -49,14 +51,17 @@ def show_upload_page():
         st.dataframe(df_upload.head(), use_container_width=True)
 
         # ===============================
-        # PREPROCESSING
+        # PREPROCESSING DATA
         # ===============================
         df_ready = preprocess_uploaded_file(df_upload)
+
+        st.success("✅ Data berhasil diproses")
 
         # ===============================
         # PARAMETER PREDIKSI
         # ===============================
         st.subheader("⚙️ Parameter Prediksi")
+
         horizon = st.slider(
             "Prediksi untuk berapa hari ke depan?",
             min_value=1,
@@ -65,25 +70,31 @@ def show_upload_page():
         )
 
         # ===============================
-        # TOMBOL PROSES
+        # PROSES PREDIKSI
         # ===============================
         if st.button("🔍 Proses Prediksi"):
-            with st.spinner("Sedang memproses prediksi..."):
-                hasil = predict_n_days(df_ready, model, horizon)
+            with st.spinner("Sedang memproses prediksi kebutuhan obat..."):
+                hasil = predict_n_days(
+                    df_ready=df_ready,
+                    model=model,
+                    horizon=horizon
+                )
 
-                # simpan ke session_state agar tampil di Page 1
                 st.session_state["hasil_prediksi"] = hasil
                 st.session_state["last_update"] = pd.Timestamp.now()
 
-            st.success("Prediksi berhasil dibuat")
+            st.success("🎯 Prediksi berhasil dibuat")
 
             st.subheader("📊 Hasil Prediksi")
             st.dataframe(hasil, use_container_width=True)
 
             st.caption(
-                "Hasil prediksi disimpan dan dapat dilihat kembali "
-                "pada halaman **Dashboard**."
+                "Hasil prediksi disimpan dan dapat diakses kembali "
+                "melalui halaman **Dashboard**."
             )
 
     except Exception as e:
-        st.error(f"Terjadi kesalahan: {e}")
+        st.error(
+            "❌ Terjadi kesalahan saat memproses data.\n\n"
+            f"Detail error: `{e}`"
+        )
