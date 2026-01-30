@@ -6,7 +6,7 @@ import upload_prediksi as upload
 # KONFIGURASI HALAMAN
 # ===============================
 st.set_page_config(
-    page_title="Prediksi Kebutuhan Stok Obat RS",
+    page_title="Sistem Farmasi RS Bhayangkara",
     page_icon="💊",
     layout="wide"
 )
@@ -14,22 +14,30 @@ st.set_page_config(
 # ===============================
 # SIDEBAR
 # ===============================
-st.sidebar.title("💊 Sistem Farmasi RS")
+st.sidebar.markdown(
+    """
+    <h2 style='text-align:center;'>🏥 RS Bhayangkara</h2>
+    <p style='text-align:center; font-size:14px;'>
+    Sistem Pendukung Keputusan<br>
+    Kebutuhan Stok Obat
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
+st.sidebar.markdown("---")
 
 menu = st.sidebar.radio(
-    "Menu Utama",
+    "📌 Menu Utama",
     ["Dashboard", "Upload & Prediksi"]
 )
 
 st.sidebar.markdown("---")
 st.sidebar.caption(
-    "Aplikasi pendukung keputusan\n"
-    "untuk kepala farmasi."
+    "Digunakan oleh:\n"
+    "**Kepala Instalasi Farmasi**"
 )
 
-# ===============================
-# NAVIGASI
-# ===============================
 if menu == "Dashboard":
     dashboard.show_dashboard()
 elif menu == "Upload & Prediksi":
