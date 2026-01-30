@@ -1,9 +1,9 @@
 import streamlit as st
-import pages.dashboard as dashboard
-import pages.upload_prediksi as upload
+import dashboard
+import upload_prediksi as upload
 
 # ===============================
-# KONFIGURASI HALAMAN (HANYA SEKALI)
+# KONFIGURASI HALAMAN
 # ===============================
 st.set_page_config(
     page_title="Prediksi Kebutuhan Stok Obat RS",
@@ -28,7 +28,7 @@ st.sidebar.caption(
 )
 
 # ===============================
-# NAVIGASI PAGE
+# NAVIGASI
 # ===============================
 if menu == "Dashboard":
     dashboard.show_dashboard()
