@@ -6,7 +6,7 @@ import upload_prediksi as upload
 # KONFIGURASI HALAMAN
 # ===============================
 st.set_page_config(
-    page_title="Sistem Farmasi RS Bhayangkara",
+    page_title="Sistem Farmasi RS Adi Sucipto",
     page_icon="💊",
     layout="wide"
 )
@@ -16,7 +16,7 @@ st.set_page_config(
 # ===============================
 st.sidebar.markdown(
     """
-    <h2 style='text-align:center;'>🏥 RS Bhayangkara</h2>
+    <h2 style='text-align:center;'>🏥 RS Adi Sucipto</h2>
     <p style='text-align:center; font-size:14px;'>
     Sistem Pendukung Keputusan<br>
     Kebutuhan Stok Obat
